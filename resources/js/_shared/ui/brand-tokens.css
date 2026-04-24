@@ -1,0 +1,11 @@
+:root {
+  --brand-primary: #0E4DA4;
+  --brand-primary-deep: #0A295C;
+  --brand-accent: #FF5A36;
+  --brand-accent-soft: #FFE2D6;
+  --brand-yellow: #FFCB3C;
+  --status-success: #16A34A;
+  --status-warn:    #EAB308;
+  --status-error:   #DC2626;
+  --status-info:    #0E4DA4;
+}

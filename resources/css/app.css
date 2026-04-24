@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.vue';
+@source '../**/*.ts';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-accent-50:  #fff4f0;
+    --color-accent-100: #ffe2d6;
+    --color-accent-200: #ffc2ab;
+    --color-accent-300: #ff9b78;
+    --color-accent-400: #ff7952;
+    --color-accent-500: #ff5a36;
+    --color-accent-600: #ea4422;
+    --color-accent-700: #c33418;
+    --color-accent-800: #9a2a16;
+    --color-accent-900: #7c2516;
+    --color-accent-950: #430e07;
+
+    --color-ink-50:  #f3f5fa;
+    --color-ink-100: #e4e9f4;
+    --color-ink-200: #c7d2e6;
+    --color-ink-300: #94a7cd;
+    --color-ink-400: #5c78a7;
+    --color-ink-500: #3a5686;
+    --color-ink-600: #243f6c;
+    --color-ink-700: #182e55;
+    --color-ink-800: #0f2142;
+    --color-ink-900: #0a1a33;
+    --color-ink-950: #05101f;
+}
+
+/* Soft radial halo used in hero backgrounds */
+.bg-hero-halo {
+    background:
+        radial-gradient(60% 80% at 15% 0%, rgba(14, 77, 164, 0.14) 0%, transparent 60%),
+        radial-gradient(50% 70% at 90% 20%, rgba(255, 90, 54, 0.12) 0%, transparent 65%),
+        linear-gradient(180deg, #f4f7fc 0%, #ffffff 100%);
+}
+
+.bg-nav-grid {
+    background-image:
+        linear-gradient(rgba(10, 26, 51, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10, 26, 51, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+/* Soft lifted card */
+.card-lift {
+    box-shadow:
+        0 1px 2px rgba(10, 26, 51, 0.04),
+        0 8px 24px -8px rgba(10, 26, 51, 0.12);
+}
+
+.card-lift-lg {
+    box-shadow:
+        0 2px 4px rgba(10, 26, 51, 0.04),
+        0 24px 60px -20px rgba(10, 26, 51, 0.22);
+}
