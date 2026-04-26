@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import ProgressSpinner from 'primevue/progressspinner';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
 import Message from 'primevue/message';
 import TrackingStepper from '@web/components/tracking/TrackingStepper.vue';
 import TrackingTimeline from '@web/components/tracking/TrackingTimeline.vue';
@@ -25,34 +27,57 @@ type TrackerPayload = {
     events: TrackerEvent[];
 };
 
+type ErrorKind = 'not_found' | 'rate_limited' | 'generic';
+
 const route = useRoute();
-const code = computed(() => String(route.params.code ?? ''));
+const router = useRouter();
+const code = computed(() => String(route.params.code ?? '').trim());
+
 const tracker = ref<TrackerPayload | null>(null);
 const loading = ref(true);
-const error = ref<string | null>(null);
+const errorKind = ref<ErrorKind | null>(null);
+const errorMessage = ref<string | null>(null);
+const searchInput = ref(code.value);
+const searching = ref(false);
 let pollId: number | null = null;
 
 useSeo({
-    title: `Tracking ${code.value} — ShipDesk`,
+    title: code.value ? `Tracking ${code.value} — ShipDesk` : 'Track a shipment — ShipDesk',
     description: 'Follow your package in real time.',
     noindex: true,
 });
 
 async function fetchTracker() {
+    if (!code.value) {
+        loading.value = false;
+        tracker.value = null;
+        errorKind.value = null;
+        return;
+    }
     try {
-        const res = await axios.get<TrackerPayload>(`/rest/public/trackers/${code.value}`, {
+        const res = await axios.get<TrackerPayload>(`/rest/public/trackers/${encodeURIComponent(code.value)}`, {
             withCredentials: false,
             headers: { Accept: 'application/json' },
         });
         tracker.value = res.data;
-        error.value = null;
+        errorKind.value = null;
+        errorMessage.value = null;
     } catch (e: unknown) {
+        tracker.value = null;
         const err = e as { response?: { status: number } };
-        if (err.response?.status === 404) error.value = 'Tracking code not found.';
-        else if (err.response?.status === 429) error.value = 'Too many requests. Try again in a minute.';
-        else error.value = 'Could not load tracking info.';
+        if (err.response?.status === 404) {
+            errorKind.value = 'not_found';
+            errorMessage.value = "We couldn't find that tracking code.";
+        } else if (err.response?.status === 429) {
+            errorKind.value = 'rate_limited';
+            errorMessage.value = 'Too many requests. Try again in a minute.';
+        } else {
+            errorKind.value = 'generic';
+            errorMessage.value = 'Could not load tracking info. Please try again.';
+        }
     } finally {
         loading.value = false;
+        searching.value = false;
     }
 }
 
@@ -61,23 +86,122 @@ function formatEta(iso: string | null | undefined): string {
     return new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 }
 
+function submitSearch() {
+    const next = searchInput.value.trim();
+    if (!next || next === code.value) return;
+    searching.value = true;
+    router.push(`/track/${encodeURIComponent(next)}`);
+}
+
+function startPolling() {
+    if (pollId !== null) window.clearInterval(pollId);
+    pollId = window.setInterval(fetchTracker, 60_000);
+}
+
 onMounted(() => {
     fetchTracker();
-    pollId = window.setInterval(fetchTracker, 60_000);
+    startPolling();
 });
 
 onUnmounted(() => {
     if (pollId !== null) window.clearInterval(pollId);
 });
+
+watch(
+    () => code.value,
+    (next) => {
+        searchInput.value = next;
+        loading.value = true;
+        tracker.value = null;
+        errorKind.value = null;
+        fetchTracker();
+        startPolling();
+    },
+);
 </script>
 
 <template>
-    <div class="max-w-2xl mx-auto">
-        <div v-if="loading" class="flex justify-center py-16">
+    <div class="max-w-2xl mx-auto space-y-6">
+        <header class="text-center">
+            <h1 class="text-2xl font-bold text-surface-900">Track your shipment</h1>
+            <p class="mt-1 text-sm text-surface-600">
+                Enter a tracking code to see real-time delivery progress.
+            </p>
+        </header>
+
+        <form
+            class="bg-white rounded-xl border border-surface-200 p-4 flex flex-col sm:flex-row gap-3"
+            @submit.prevent="submitSearch"
+        >
+            <div class="relative flex-1">
+                <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"></i>
+                <InputText
+                    v-model="searchInput"
+                    placeholder="e.g. 1Z999AA10123456784"
+                    class="w-full pl-9"
+                    aria-label="Tracking code"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+            </div>
+            <Button
+                type="submit"
+                label="Track"
+                icon="pi pi-arrow-right"
+                icon-pos="right"
+                :loading="searching"
+                :disabled="!searchInput.trim() || searchInput.trim() === code"
+            />
+        </form>
+
+        <div v-if="loading" class="flex flex-col items-center py-16">
             <ProgressSpinner />
+            <p class="mt-4 text-sm text-surface-500">Looking up <span class="font-mono">{{ code }}</span>…</p>
         </div>
 
-        <Message v-else-if="error" severity="error" :closable="false">{{ error }}</Message>
+        <template v-else-if="errorKind === 'not_found'">
+            <div class="bg-white rounded-xl border border-surface-200 p-8 text-center">
+                <div class="mx-auto w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                    <i class="pi pi-exclamation-circle text-2xl"></i>
+                </div>
+                <h2 class="mt-4 text-xl font-semibold text-surface-900">No tracking results</h2>
+                <p class="mt-2 text-surface-600">
+                    We couldn't find a shipment for
+                    <span class="font-mono font-semibold text-surface-900 break-all">{{ code }}</span>.
+                </p>
+
+                <div class="mt-6 text-left bg-surface-50 border border-surface-200 rounded-lg p-4">
+                    <h3 class="text-sm font-semibold text-surface-900">A few things to check</h3>
+                    <ul class="mt-2 space-y-2 text-sm text-surface-600">
+                        <li class="flex gap-2">
+                            <i class="pi pi-check text-primary-500 mt-0.5"></i>
+                            <span>Double-check the code for typos — extra spaces or zeros vs. the letter O.</span>
+                        </li>
+                        <li class="flex gap-2">
+                            <i class="pi pi-check text-primary-500 mt-0.5"></i>
+                            <span>If the label was just printed, it can take a few hours for the carrier to register the first scan.</span>
+                        </li>
+                        <li class="flex gap-2">
+                            <i class="pi pi-check text-primary-500 mt-0.5"></i>
+                            <span>Some carriers only expose tracking once the package has been picked up.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="mailto:help@shipdesk.local">
+                        <Button label="Contact support" icon="pi pi-envelope" severity="secondary" outlined />
+                    </a>
+                    <router-link to="/">
+                        <Button label="Back to home" icon="pi pi-home" text />
+                    </router-link>
+                </div>
+            </div>
+        </template>
+
+        <Message v-else-if="errorKind" severity="error" :closable="false">
+            {{ errorMessage }}
+        </Message>
 
         <div v-else-if="tracker" class="space-y-6">
             <div class="bg-white rounded-xl border border-surface-200 p-6">
@@ -119,8 +243,20 @@ onUnmounted(() => {
             <div class="bg-white rounded-xl border border-surface-200 p-6">
                 <h2 class="font-semibold text-surface-900 mb-4">Event history</h2>
                 <TrackingTimeline :events="tracker.events" />
-                <p v-if="tracker.events.length === 0" class="text-sm text-surface-500">No events yet.</p>
+                <p v-if="tracker.events.length === 0" class="text-sm text-surface-500">
+                    No events yet — the carrier hasn't scanned this package. Check back shortly.
+                </p>
             </div>
+        </div>
+
+        <div v-else class="bg-white rounded-xl border border-surface-200 p-8 text-center">
+            <div class="mx-auto w-14 h-14 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center">
+                <i class="pi pi-send text-2xl"></i>
+            </div>
+            <h2 class="mt-4 text-xl font-semibold text-surface-900">Enter a tracking code</h2>
+            <p class="mt-2 text-surface-600">
+                Paste the tracking code from your shipping confirmation email above to get started.
+            </p>
         </div>
     </div>
 </template>
