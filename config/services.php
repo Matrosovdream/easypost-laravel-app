@@ -18,6 +18,20 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'email' => [
+        // Driver bound to App\Contracts\Email\EmailServiceContract:
+        // 'smtp' (Laravel Mail facade) | 'mailgun'.
+        'driver' => env('EMAIL_DRIVER', 'smtp'),
+        'from_address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'from_name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+    ],
+
+    'mailgun' => [
+        'secret' => env('MAILGUN_SECRET'),
+        'domain' => env('MAILGUN_DOMAIN'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'https://api.mailgun.net/v3'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],
