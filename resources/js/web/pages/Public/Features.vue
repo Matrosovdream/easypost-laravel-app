@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import axios from 'axios';
 import { useSeo } from '@web/composables/useSeo';
 import MarketingFeatureGrid from '@web/components/marketing/MarketingFeatureGrid.vue';
 import MarketingSplitFeature from '@web/components/marketing/MarketingSplitFeature.vue';
@@ -8,6 +10,14 @@ import MarketingCtaBand from '@web/components/marketing/MarketingCtaBand.vue';
 useSeo({
     title: 'Features — ShipDesk',
     description: 'Role-based workflows, rate shopping across 100+ carriers, branded tracking, Claims Autopilot, FlexRate markup, and real-time webhooks.',
+});
+
+// Reverb demo: ping the backend so it broadcasts on the public `demo.features`
+// channel. Any admin watching the dashboard will see a notification appear.
+onMounted(() => {
+    axios.post('/api/demo/features-visited').catch(() => {
+        // Demo only — silent fail if backend or Reverb is down.
+    });
 });
 </script>
 

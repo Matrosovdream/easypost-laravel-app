@@ -107,7 +107,7 @@ services:
     networks:
       - easypost-management-app-development
     ports:
-      - "${REVERB_PORT:-9090}:8080"
+      - "${REVERB_PUBLIC_PORT:-9090}:8080"
     depends_on:
       redis:
         condition: service_started

@@ -1,9 +1,11 @@
 @php
+    // Browser-facing Reverb config. Falls back to the server-side values when
+    // REVERB_PUBLIC_* aren't set (e.g. local non-Docker dev).
     $reverbConfig = [
         'REVERB_APP_KEY' => config('broadcasting.connections.reverb.key'),
-        'REVERB_HOST'    => config('broadcasting.connections.reverb.options.host'),
-        'REVERB_PORT'    => config('broadcasting.connections.reverb.options.port'),
-        'REVERB_SCHEME'  => config('broadcasting.connections.reverb.options.scheme'),
+        'REVERB_HOST'    => env('REVERB_PUBLIC_HOST',   config('broadcasting.connections.reverb.options.host')),
+        'REVERB_PORT'    => env('REVERB_PUBLIC_PORT',   config('broadcasting.connections.reverb.options.port')),
+        'REVERB_SCHEME'  => env('REVERB_PUBLIC_SCHEME', config('broadcasting.connections.reverb.options.scheme')),
     ];
 @endphp
 <!DOCTYPE html>

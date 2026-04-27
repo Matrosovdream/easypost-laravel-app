@@ -33,9 +33,15 @@ use App\Http\Controllers\Api\Profile\ProfileController;
 use App\Http\Controllers\Api\Billing\CheckoutController as BillingCheckoutController;
 use App\Http\Controllers\Api\Billing\PlanController as BillingPlanController;
 use App\Http\Controllers\Api\Billing\PortalController as BillingPortalController;
+use App\Http\Controllers\Api\Demo\FeaturesVisitController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => ['ok' => true])->name('api.health');
+
+// Public demo endpoint — broadcasts a Reverb event so any logged-in admin
+// watching the dashboard sees a real-time notification.
+Route::post('/demo/features-visited', FeaturesVisitController::class)
+    ->name('api.demo.features-visited');
 
 Route::prefix('auth')->group(function () {
     Route::post('pin-login', PinLoginController::class)->name('api.auth.pin-login');
