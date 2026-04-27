@@ -1,0 +1,32 @@
+[
+  {
+    "id": "rtn_dummy_001",
+    "object": "Return",
+    "original_shipment_id": "shp_dummy_001",
+    "return_shipment_id": "shp_dummy_005",
+    "reason": "wrong_item",
+    "items": [
+      { "sku": "SKU-WB-001", "description": "Widget Blue", "quantity": 1, "condition": "unopened" }
+    ],
+    "status": "approved",
+    "auto_refund": true,
+    "refund_status": "pending",
+    "refund_amount": "29.00",
+    "notes": "Customer reported wrong color — sending replacement."
+  },
+  {
+    "id": "rtn_dummy_002",
+    "object": "Return",
+    "original_shipment_id": "shp_dummy_004",
+    "return_shipment_id": null,
+    "reason": "changed_mind",
+    "items": [
+      { "sku": "SKU-WG-002", "description": "Widget Green", "quantity": 2, "condition": "opened" }
+    ],
+    "status": "declined",
+    "auto_refund": false,
+    "refund_status": null,
+    "refund_amount": null,
+    "notes": "Outside return window per policy."
+  }
+]

@@ -1,0 +1,95 @@
+[
+  {
+    "id": "adr_dummy_wh_sf",
+    "object": "Address",
+    "name": "ShipDesk Warehouse",
+    "company": "ShipDesk",
+    "street1": "417 Montgomery St",
+    "street2": null,
+    "city": "San Francisco",
+    "state": "CA",
+    "zip": "94104",
+    "country": "US",
+    "phone": "+14155550100",
+    "email": "warehouse@shipdesk.local",
+    "residential": false,
+    "verified": true,
+    "verifications": {
+      "delivery": { "success": true, "errors": [] },
+      "zip4": { "success": true, "errors": [] }
+    }
+  },
+  {
+    "id": "adr_dummy_cust_ny",
+    "object": "Address",
+    "name": "Casey Buyer",
+    "company": null,
+    "street1": "1600 Amphitheatre Pkwy",
+    "street2": null,
+    "city": "Mountain View",
+    "state": "CA",
+    "zip": "94043",
+    "country": "US",
+    "phone": "+14155550101",
+    "email": "casey@example.com",
+    "residential": true,
+    "verified": true,
+    "verifications": { "delivery": { "success": true, "errors": [] } }
+  },
+  {
+    "id": "adr_dummy_cust_la",
+    "object": "Address",
+    "name": "Avery Carter",
+    "company": null,
+    "street1": "500 5th Ave",
+    "street2": "Apt 12A",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10110",
+    "country": "US",
+    "phone": "+12125550102",
+    "email": "avery@example.com",
+    "residential": true,
+    "verified": true,
+    "verifications": { "delivery": { "success": true, "errors": [] } }
+  },
+  {
+    "id": "adr_dummy_cust_tx",
+    "object": "Address",
+    "name": "Jesse Doe",
+    "company": null,
+    "street1": "233 S Wacker Dr",
+    "street2": null,
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60606",
+    "country": "US",
+    "phone": "+13125550103",
+    "email": "jesse@example.com",
+    "residential": false,
+    "verified": true,
+    "verifications": { "delivery": { "success": true, "errors": [] } }
+  },
+  {
+    "id": "adr_dummy_cust_dc",
+    "object": "Address",
+    "name": "Morgan Klein",
+    "company": null,
+    "street1": "701 Pennsylvania Ave NW",
+    "street2": null,
+    "city": "Washington",
+    "state": "DC",
+    "zip": "20004",
+    "country": "US",
+    "phone": "+12025550104",
+    "email": "morgan@example.com",
+    "residential": false,
+    "verified": false,
+    "verifications": {
+      "delivery": {
+        "success": false,
+        "errors": [{ "code": "E.HOUSE_NUMBER.MISSING", "message": "House number is missing" }]
+      }
+    }
+  }
+]

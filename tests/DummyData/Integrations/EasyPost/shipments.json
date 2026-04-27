@@ -1,0 +1,168 @@
+[
+  {
+    "id": "shp_dummy_001",
+    "object": "Shipment",
+    "mode": "test",
+    "reference": "DUMMY-1001",
+    "status": "delivered",
+    "is_return": false,
+    "to_address": { "id": "adr_dummy_cust_ny" },
+    "from_address": { "id": "adr_dummy_wh_sf" },
+    "parcel": { "id": "prcl_dummy_001" },
+    "tracking_code": "EZ4000000004",
+    "carrier": "USPS",
+    "service": "Priority",
+    "selected_rate": {
+      "id": "rate_dummy_001a",
+      "carrier": "USPS",
+      "service": "Priority",
+      "rate": "8.44",
+      "retail_rate": "10.20",
+      "delivery_days": 2,
+      "currency": "USD"
+    },
+    "rates": [
+      { "id": "rate_dummy_001a", "carrier": "USPS",  "service": "Priority",       "rate": "8.44",  "retail_rate": "10.20", "delivery_days": 2, "currency": "USD" },
+      { "id": "rate_dummy_001b", "carrier": "UPS",   "service": "Ground",         "rate": "12.20", "retail_rate": "16.50", "delivery_days": 3, "currency": "USD" },
+      { "id": "rate_dummy_001c", "carrier": "FedEx", "service": "Home Delivery",  "rate": "14.60", "retail_rate": "18.95", "delivery_days": 2, "currency": "USD" }
+    ],
+    "options": {
+      "currency": "USD",
+      "label_format": "PDF",
+      "delivery_confirmation": "NO_SIGNATURE",
+      "machinable": true
+    },
+    "fees": [
+      { "type": "LabelFee",   "amount": "0.01", "charged": true, "refunded": false },
+      { "type": "PostageFee", "amount": "8.44", "charged": true, "refunded": false }
+    ],
+    "insurance": "100.00",
+    "messages": []
+  },
+  {
+    "id": "shp_dummy_002",
+    "object": "Shipment",
+    "mode": "test",
+    "reference": "DUMMY-1002",
+    "status": "in_transit",
+    "is_return": false,
+    "to_address": { "id": "adr_dummy_cust_la" },
+    "from_address": { "id": "adr_dummy_wh_sf" },
+    "parcel": { "id": "prcl_dummy_002" },
+    "tracking_code": "EZ2000000002",
+    "carrier": "UPS",
+    "service": "Ground",
+    "selected_rate": {
+      "id": "rate_dummy_002b",
+      "carrier": "UPS",
+      "service": "Ground",
+      "rate": "12.20",
+      "retail_rate": "16.50",
+      "delivery_days": 3,
+      "currency": "USD"
+    },
+    "rates": [
+      { "id": "rate_dummy_002a", "carrier": "USPS", "service": "Priority", "rate": "9.95",  "retail_rate": "12.95", "delivery_days": 2, "currency": "USD" },
+      { "id": "rate_dummy_002b", "carrier": "UPS",  "service": "Ground",   "rate": "12.20", "retail_rate": "16.50", "delivery_days": 3, "currency": "USD" }
+    ],
+    "options": { "currency": "USD", "label_format": "PDF", "machinable": true },
+    "fees": [
+      { "type": "LabelFee",   "amount": "0.01",  "charged": true, "refunded": false },
+      { "type": "PostageFee", "amount": "12.20", "charged": true, "refunded": false }
+    ],
+    "insurance": "150.00",
+    "messages": []
+  },
+  {
+    "id": "shp_dummy_003",
+    "object": "Shipment",
+    "mode": "test",
+    "reference": "DUMMY-1003",
+    "status": "purchased",
+    "is_return": false,
+    "to_address": { "id": "adr_dummy_cust_tx" },
+    "from_address": { "id": "adr_dummy_wh_sf" },
+    "parcel": { "id": "prcl_dummy_003" },
+    "tracking_code": "EZ1000000001",
+    "carrier": "FedEx",
+    "service": "Home Delivery",
+    "selected_rate": {
+      "id": "rate_dummy_003c",
+      "carrier": "FedEx",
+      "service": "Home Delivery",
+      "rate": "14.60",
+      "retail_rate": "18.95",
+      "delivery_days": 2,
+      "currency": "USD"
+    },
+    "rates": [
+      { "id": "rate_dummy_003a", "carrier": "USPS",  "service": "Priority",      "rate": "10.50", "retail_rate": "13.20", "delivery_days": 3, "currency": "USD" },
+      { "id": "rate_dummy_003b", "carrier": "UPS",   "service": "Ground",        "rate": "13.40", "retail_rate": "17.10", "delivery_days": 4, "currency": "USD" },
+      { "id": "rate_dummy_003c", "carrier": "FedEx", "service": "Home Delivery", "rate": "14.60", "retail_rate": "18.95", "delivery_days": 2, "currency": "USD" }
+    ],
+    "options": { "currency": "USD", "label_format": "PDF", "machinable": true },
+    "fees": [
+      { "type": "LabelFee",      "amount": "0.01",  "charged": true, "refunded": false },
+      { "type": "PostageFee",    "amount": "14.60", "charged": true, "refunded": false },
+      { "type": "InsuranceFee",  "amount": "0.50",  "charged": true, "refunded": false }
+    ],
+    "insurance": "75.00",
+    "messages": []
+  },
+  {
+    "id": "shp_dummy_004",
+    "object": "Shipment",
+    "mode": "test",
+    "reference": "DUMMY-1004",
+    "status": "rated",
+    "is_return": false,
+    "to_address": { "id": "adr_dummy_cust_dc" },
+    "from_address": { "id": "adr_dummy_wh_sf" },
+    "parcel": { "id": "prcl_dummy_004" },
+    "tracking_code": null,
+    "carrier": null,
+    "service": null,
+    "selected_rate": null,
+    "rates": [
+      { "id": "rate_dummy_004a", "carrier": "USPS", "service": "Priority", "rate": "7.95",  "retail_rate": "9.95",  "delivery_days": 3, "currency": "USD" },
+      { "id": "rate_dummy_004b", "carrier": "UPS",  "service": "Ground",   "rate": "11.10", "retail_rate": "14.50", "delivery_days": 4, "currency": "USD" }
+    ],
+    "options": { "currency": "USD" },
+    "fees": [],
+    "insurance": null,
+    "messages": []
+  },
+  {
+    "id": "shp_dummy_005",
+    "object": "Shipment",
+    "mode": "test",
+    "reference": "DUMMY-RTN-2001",
+    "status": "purchased",
+    "is_return": true,
+    "to_address": { "id": "adr_dummy_wh_sf" },
+    "from_address": { "id": "adr_dummy_cust_ny" },
+    "parcel": { "id": "prcl_dummy_005" },
+    "tracking_code": "EZ3000000003",
+    "carrier": "USPS",
+    "service": "Priority",
+    "selected_rate": {
+      "id": "rate_dummy_005a",
+      "carrier": "USPS",
+      "service": "Priority",
+      "rate": "9.20",
+      "retail_rate": "11.50",
+      "delivery_days": 3,
+      "currency": "USD"
+    },
+    "rates": [
+      { "id": "rate_dummy_005a", "carrier": "USPS", "service": "Priority", "rate": "9.20", "retail_rate": "11.50", "delivery_days": 3, "currency": "USD" }
+    ],
+    "options": { "currency": "USD", "label_format": "PDF" },
+    "fees": [
+      { "type": "LabelFee",   "amount": "0.01", "charged": true, "refunded": false },
+      { "type": "PostageFee", "amount": "9.20", "charged": true, "refunded": false }
+    ],
+    "insurance": null,
+    "messages": []
+  }
+]

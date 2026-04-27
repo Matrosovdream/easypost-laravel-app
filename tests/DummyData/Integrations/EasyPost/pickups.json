@@ -1,0 +1,34 @@
+[
+  {
+    "id": "pickup_dummy_001",
+    "object": "Pickup",
+    "reference": "DUMMY-PU-001",
+    "address": { "id": "adr_dummy_wh_sf" },
+    "min_datetime": "2026-04-27T09:00:00Z",
+    "max_datetime": "2026-04-27T17:00:00Z",
+    "instructions": "Front desk, ring buzzer twice.",
+    "is_account_address": false,
+    "carrier": "USPS",
+    "service": "NextDay",
+    "confirmation": "WTC123456789",
+    "status": "scheduled",
+    "rates": [
+      { "id": "pur_dummy_001a", "carrier": "USPS", "service": "NextDay", "rate": "0.00", "currency": "USD" }
+    ]
+  },
+  {
+    "id": "pickup_dummy_002",
+    "object": "Pickup",
+    "reference": "DUMMY-PU-002",
+    "address": { "id": "adr_dummy_wh_sf" },
+    "min_datetime": "2026-04-25T10:00:00Z",
+    "max_datetime": "2026-04-25T16:00:00Z",
+    "instructions": null,
+    "is_account_address": false,
+    "carrier": "UPS",
+    "service": "Ground",
+    "confirmation": null,
+    "status": "cancelled",
+    "rates": []
+  }
+]

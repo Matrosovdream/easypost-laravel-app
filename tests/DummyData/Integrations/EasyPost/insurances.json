@@ -1,0 +1,44 @@
+[
+  {
+    "id": "ins_dummy_001",
+    "object": "Insurance",
+    "shipment_id": "shp_dummy_001",
+    "provider": "easypost",
+    "tracking_code": "EZ4000000004",
+    "carrier": "USPS",
+    "amount": "100.00",
+    "fee": "0.50",
+    "currency": "USD",
+    "status": "purchased",
+    "reference": "DUMMY-INS-001",
+    "messages": []
+  },
+  {
+    "id": "ins_dummy_002",
+    "object": "Insurance",
+    "shipment_id": "shp_dummy_002",
+    "provider": "easypost",
+    "tracking_code": "EZ2000000002",
+    "carrier": "UPS",
+    "amount": "150.00",
+    "fee": "0.75",
+    "currency": "USD",
+    "status": "new",
+    "reference": "DUMMY-INS-002",
+    "messages": []
+  },
+  {
+    "id": "ins_dummy_003",
+    "object": "Insurance",
+    "shipment_id": "shp_dummy_003",
+    "provider": "easypost",
+    "tracking_code": "EZ1000000001",
+    "carrier": "FedEx",
+    "amount": "75.00",
+    "fee": "0.50",
+    "currency": "USD",
+    "status": "refunded",
+    "reference": "DUMMY-INS-003",
+    "messages": [{ "type": "refund", "message": "Refunded on customer request." }]
+  }
+]

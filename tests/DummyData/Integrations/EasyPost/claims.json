@@ -1,0 +1,40 @@
+[
+  {
+    "id": "clm_dummy_001",
+    "object": "Claim",
+    "shipment_id": "shp_dummy_001",
+    "insurance_id": "ins_dummy_001",
+    "type": "damage",
+    "amount": "100.00",
+    "recovered_amount": null,
+    "currency": "USD",
+    "description": "Item arrived damaged — corner crushed and contents broken.",
+    "status": "open",
+    "timeline": [
+      { "at": "2026-04-22T16:00:00Z", "event": "claim_filed", "by": "system" }
+    ],
+    "paid_at": null,
+    "closed_at": null,
+    "close_reason": null
+  },
+  {
+    "id": "clm_dummy_002",
+    "object": "Claim",
+    "shipment_id": "shp_dummy_002",
+    "insurance_id": "ins_dummy_002",
+    "type": "loss",
+    "amount": "150.00",
+    "recovered_amount": "150.00",
+    "currency": "USD",
+    "description": "Tracking went silent for 14 days; carrier confirmed lost.",
+    "status": "paid",
+    "timeline": [
+      { "at": "2026-04-26T09:00:00Z", "event": "claim_filed",   "by": "system" },
+      { "at": "2026-04-26T18:30:00Z", "event": "claim_approved","by": "manager" },
+      { "at": "2026-04-27T11:15:00Z", "event": "claim_paid",    "by": "system" }
+    ],
+    "paid_at": "2026-04-27T11:15:00Z",
+    "closed_at": "2026-04-27T11:15:00Z",
+    "close_reason": "paid_in_full"
+  }
+]

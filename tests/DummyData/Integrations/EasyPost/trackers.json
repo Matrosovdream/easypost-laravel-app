@@ -1,0 +1,147 @@
+[
+  {
+    "id": "trk_dummy_001",
+    "object": "Tracker",
+    "tracking_code": "EZ4000000004",
+    "carrier": "USPS",
+    "shipment_id": "shp_dummy_001",
+    "status": "delivered",
+    "status_detail": "arrived_at_destination",
+    "signed_by": "C. BUYER",
+    "weight": 16.0,
+    "est_delivery_date": "2026-04-22T00:00:00Z",
+    "public_url": "https://track.easypost.com/djE6dHJrX2R1bW15XzAwMQ",
+    "is_return": false,
+    "tracking_details": [
+      {
+        "object": "TrackingDetail",
+        "message": "Shipping Label Created",
+        "status": "pre_transit",
+        "status_detail": "label_created",
+        "datetime": "2026-04-20T10:00:00Z",
+        "source": "USPS",
+        "tracking_location": { "city": "SAN FRANCISCO", "state": "CA", "zip": "94104", "country": null }
+      },
+      {
+        "object": "TrackingDetail",
+        "message": "Accepted at originating facility",
+        "status": "in_transit",
+        "status_detail": "arrived_at_origin_facility",
+        "datetime": "2026-04-20T18:30:00Z",
+        "source": "USPS",
+        "tracking_location": { "city": "SAN FRANCISCO", "state": "CA", "zip": "94104", "country": null }
+      },
+      {
+        "object": "TrackingDetail",
+        "message": "Delivered, In/At Mailbox",
+        "status": "delivered",
+        "status_detail": "arrived_at_destination",
+        "datetime": "2026-04-22T14:12:00Z",
+        "source": "USPS",
+        "tracking_location": { "city": "MOUNTAIN VIEW", "state": "CA", "zip": "94043", "country": null }
+      }
+    ]
+  },
+  {
+    "id": "trk_dummy_002",
+    "object": "Tracker",
+    "tracking_code": "EZ2000000002",
+    "carrier": "UPS",
+    "shipment_id": "shp_dummy_002",
+    "status": "in_transit",
+    "status_detail": "departed_facility",
+    "signed_by": null,
+    "weight": 24.0,
+    "est_delivery_date": "2026-04-28T00:00:00Z",
+    "public_url": "https://track.easypost.com/djE6dHJrX2R1bW15XzAwMg",
+    "is_return": false,
+    "tracking_details": [
+      {
+        "object": "TrackingDetail",
+        "message": "Shipping Label Created",
+        "status": "pre_transit",
+        "status_detail": "label_created",
+        "datetime": "2026-04-24T09:00:00Z",
+        "source": "UPS",
+        "tracking_location": { "city": "SAN FRANCISCO", "state": "CA", "zip": "94104", "country": null }
+      },
+      {
+        "object": "TrackingDetail",
+        "message": "Picked up by carrier",
+        "status": "in_transit",
+        "status_detail": "picked_up",
+        "datetime": "2026-04-24T17:15:00Z",
+        "source": "UPS",
+        "tracking_location": { "city": "SAN FRANCISCO", "state": "CA", "zip": "94104", "country": null }
+      },
+      {
+        "object": "TrackingDetail",
+        "message": "Departed UPS facility",
+        "status": "in_transit",
+        "status_detail": "departed_facility",
+        "datetime": "2026-04-25T03:40:00Z",
+        "source": "UPS",
+        "tracking_location": { "city": "SACRAMENTO", "state": "CA", "zip": "95814", "country": null }
+      }
+    ]
+  },
+  {
+    "id": "trk_dummy_003",
+    "object": "Tracker",
+    "tracking_code": "EZ1000000001",
+    "carrier": "FedEx",
+    "shipment_id": "shp_dummy_003",
+    "status": "pre_transit",
+    "status_detail": "label_created",
+    "signed_by": null,
+    "weight": 32.0,
+    "est_delivery_date": "2026-04-29T00:00:00Z",
+    "public_url": "https://track.easypost.com/djE6dHJrX2R1bW15XzAwMw",
+    "is_return": false,
+    "tracking_details": [
+      {
+        "object": "TrackingDetail",
+        "message": "Shipping Label Created",
+        "status": "pre_transit",
+        "status_detail": "label_created",
+        "datetime": "2026-04-25T11:30:00Z",
+        "source": "FedEx",
+        "tracking_location": { "city": "SAN FRANCISCO", "state": "CA", "zip": "94104", "country": null }
+      }
+    ]
+  },
+  {
+    "id": "trk_dummy_005",
+    "object": "Tracker",
+    "tracking_code": "EZ3000000003",
+    "carrier": "USPS",
+    "shipment_id": "shp_dummy_005",
+    "status": "out_for_delivery",
+    "status_detail": "out_for_delivery",
+    "signed_by": null,
+    "weight": 48.0,
+    "est_delivery_date": "2026-04-26T00:00:00Z",
+    "public_url": "https://track.easypost.com/djE6dHJrX2R1bW15XzAwNQ",
+    "is_return": true,
+    "tracking_details": [
+      {
+        "object": "TrackingDetail",
+        "message": "Return label created",
+        "status": "pre_transit",
+        "status_detail": "label_created",
+        "datetime": "2026-04-23T08:00:00Z",
+        "source": "USPS",
+        "tracking_location": { "city": "MOUNTAIN VIEW", "state": "CA", "zip": "94043", "country": null }
+      },
+      {
+        "object": "TrackingDetail",
+        "message": "Out for delivery",
+        "status": "out_for_delivery",
+        "status_detail": "out_for_delivery",
+        "datetime": "2026-04-26T07:45:00Z",
+        "source": "USPS",
+        "tracking_location": { "city": "SAN FRANCISCO", "state": "CA", "zip": "94104", "country": null }
+      }
+    ]
+  }
+]

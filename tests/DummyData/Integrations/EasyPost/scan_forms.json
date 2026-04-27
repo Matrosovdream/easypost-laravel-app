@@ -1,0 +1,11 @@
+[
+  {
+    "id": "sf_dummy_001",
+    "object": "ScanForm",
+    "carrier": "USPS",
+    "address": { "id": "adr_dummy_wh_sf" },
+    "tracking_codes": ["EZ4000000004", "EZ2000000002"],
+    "form_url": "https://easypost-files.s3.amazonaws.com/files/scan_form/dummy_001/scan_form.pdf",
+    "status": "created"
+  }
+]
