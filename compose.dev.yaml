@@ -9,7 +9,7 @@ services:
     environment:
       - NGINX_HOST=localhost
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     depends_on:
       php-fpm:
         condition: service_started
@@ -34,7 +34,7 @@ services:
     volumes:
       - ./:/var/www
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     depends_on:
       postgres:
         condition: service_started
@@ -63,7 +63,7 @@ services:
     volumes:
       - ./:/var/www
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
 
   horizon:
     build:
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./:/var/www
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     depends_on:
       php-fpm:
         condition: service_started
@@ -105,7 +105,7 @@ services:
     volumes:
       - ./:/var/www
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     ports:
       - "${REVERB_PORT:-9090}:8080"
     depends_on:
@@ -126,7 +126,7 @@ services:
     volumes:
       - meilisearch-data-development:/meili_data
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:7700/health"]
       interval: 10s
@@ -147,7 +147,7 @@ services:
     volumes:
       - ./:/var/www
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     depends_on:
       php-fpm:
         condition: service_started
@@ -160,20 +160,20 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      - POSTGRES_DB=${DB_DATABASE:-freshdesk}
-      - POSTGRES_USER=${DB_USERNAME:-freshdesk}
+      - POSTGRES_DB=${DB_DATABASE:-easypost}
+      - POSTGRES_USER=${DB_USERNAME:-easypost}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
     volumes:
       - postgres-data-development:/var/lib/postgresql/data
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
 
   redis:
     image: redis:alpine
     ports:
       - "${REDIS_PORT:-6379}:6379"
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
 
   adminer:
     image: adminer:latest
@@ -183,13 +183,13 @@ services:
       - ADMINER_DEFAULT_SERVER=postgres
       - ADMINER_DESIGN=dracula
     networks:
-      - freshdesk-management-app-development
+      - easypost-management-app-development
     depends_on:
       postgres:
         condition: service_started
 
 networks:
-  freshdesk-management-app-development:
+  easypost-management-app-development:
 
 volumes:
   postgres-data-development:

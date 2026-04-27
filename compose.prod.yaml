@@ -5,10 +5,10 @@ services:
       dockerfile: ./docker/production/nginx/Dockerfile
     restart: unless-stopped
     volumes:
-      - freshdesk-management-app-storage-production:/var/www/storage:ro
-      - freshdesk-management-app-public-assets:/var/www/public/build:ro
+      - easypost-management-app-storage-production:/var/www/storage:ro
+      - easypost-management-app-public-assets:/var/www/public/build:ro
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     ports:
       - "${NGINX_PORT:-8080}:80"
     depends_on:
@@ -22,12 +22,12 @@ services:
       target: production
     restart: unless-stopped
     volumes:
-      - freshdesk-management-app-public-assets:/var/www/public/build
-      - freshdesk-management-app-storage-production:/var/www/storage
+      - easypost-management-app-public-assets:/var/www/public/build
+      - easypost-management-app-storage-production:/var/www/storage
     env_file:
       - .env
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     healthcheck:
       test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
       interval: 10s
@@ -46,11 +46,11 @@ services:
       target: production
     restart: unless-stopped
     volumes:
-      - freshdesk-management-app-storage-production:/var/www/storage
+      - easypost-management-app-storage-production:/var/www/storage
     env_file:
       - .env
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     depends_on:
       php-fpm:
         condition: service_healthy
@@ -75,7 +75,7 @@ services:
     env_file:
       - .env
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     ports:
       - "${REVERB_PORT:-9090}:8080"
     depends_on:
@@ -94,7 +94,7 @@ services:
     volumes:
       - meilisearch-data-production:/meili_data
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:7700/health"]
       interval: 10s
@@ -108,11 +108,11 @@ services:
       target: production
     restart: unless-stopped
     volumes:
-      - freshdesk-management-app-storage-production:/var/www/storage
+      - easypost-management-app-storage-production:/var/www/storage
     env_file:
       - .env
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     depends_on:
       php-fpm:
         condition: service_healthy
@@ -126,13 +126,13 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      - POSTGRES_DB=${DB_DATABASE:-freshdesk}
-      - POSTGRES_USER=${DB_USERNAME:-freshdesk}
+      - POSTGRES_DB=${DB_DATABASE:-easypost}
+      - POSTGRES_USER=${DB_USERNAME:-easypost}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
     volumes:
       - postgres-data-production:/var/lib/postgresql/data
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 10s
@@ -143,7 +143,7 @@ services:
     image: redis:alpine
     restart: unless-stopped
     networks:
-      - freshdesk-management-app-production
+      - easypost-management-app-production
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -151,10 +151,10 @@ services:
       retries: 3
 
 networks:
-  freshdesk-management-app-production:
+  easypost-management-app-production:
 
 volumes:
   postgres-data-production:
-  freshdesk-management-app-storage-production:
-  freshdesk-management-app-public-assets:
+  easypost-management-app-storage-production:
+  easypost-management-app-public-assets:
   meilisearch-data-production:
