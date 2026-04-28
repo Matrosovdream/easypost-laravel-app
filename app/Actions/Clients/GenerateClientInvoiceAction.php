@@ -3,12 +3,14 @@
 namespace App\Actions\Clients;
 
 use App\Helpers\Clients\InvoiceHelper;
-use App\Models\Client;
+use App\Repositories\Client\ClientRepo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 class GenerateClientInvoiceAction
 {
     public function __construct(
+        private readonly ClientRepo $clients,
         private readonly InvoiceHelper $invoices,
     ) {}
 
@@ -17,8 +19,12 @@ class GenerateClientInvoiceAction
      * Aggregates delivered/purchased shipments within the window, applies
      * FlexRate markup, and returns line items plus totals.
      */
-    public function execute(Client $client, Carbon $from, Carbon $to): array
+    public function execute(int $id, Carbon $from, Carbon $to): array
     {
+        $client = $this->clients->getModel()->newQuery()->find($id);
+        abort_if(! $client, 404);
+        Gate::authorize('view', $client);
+
         $lines = $this->invoices->buildLines($client, $from, $to);
 
         return [

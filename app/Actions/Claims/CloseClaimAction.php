@@ -2,17 +2,25 @@
 
 namespace App\Actions\Claims;
 
-use App\Models\Claim;
+use App\Helpers\Claims\ClaimHelper;
 use App\Models\User;
 use App\Repositories\Care\ClaimRepo;
+use Illuminate\Support\Facades\Gate;
 
 class CloseClaimAction
 {
-    public function __construct(private readonly ClaimRepo $claims) {}
+    public function __construct(
+        private readonly ClaimRepo $claims,
+        private readonly ClaimHelper $helper,
+    ) {}
 
-    public function execute(User $user, Claim $claim, ?string $reason = null): Claim
+    public function execute(User $user, int $id, ?string $reason = null): array
     {
-        return $this->claims->transition(
+        $claim = $this->claims->findInTeam((int) $user->current_team_id, $id);
+        abort_if(! $claim, 404);
+        Gate::authorize('view', $claim);
+
+        $claim = $this->claims->transition(
             $claim,
             [
                 'state' => 'closed',
@@ -21,5 +29,7 @@ class CloseClaimAction
             ],
             ['at' => now()->toIso8601String(), 'event' => 'closed', 'by' => $user->id, 'reason' => $reason],
         );
+
+        return $this->helper->toIdentity($claim);
     }
 }

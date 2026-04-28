@@ -18,8 +18,13 @@ class RegenerateUserPinAction
      * Returns the newly generated plaintext PIN ONCE — the caller is expected to
      * display or email it immediately, then forget it.
      */
-    public function execute(User $target): string
+    public function execute(User $actor, int $targetId): array
     {
+        abort_unless(in_array('users.manage', $actor->rights(), true), 403);
+
+        $target = $this->users->getModel()->newQuery()->find($targetId);
+        abort_if(! $target, 404);
+
         $pepper = config('app.pin_pepper');
         if (! is_string($pepper) || $pepper === '') {
             throw new RuntimeException('PIN_PEPPER is not configured.');
@@ -48,6 +53,6 @@ class RegenerateUserPinAction
             'meta' => json_encode(['method' => 'regenerate']),
         ]);
 
-        return $pin;
+        return ['pin' => $pin];
     }
 }

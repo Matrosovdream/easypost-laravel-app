@@ -2,10 +2,11 @@
 
 namespace App\Actions\Claims;
 
-use App\Models\Claim;
+use App\Helpers\Claims\ClaimHelper;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
 use App\Repositories\Care\ClaimRepo;
+use Illuminate\Support\Facades\Gate;
 use RuntimeException;
 
 class SubmitClaimAction
@@ -13,10 +14,15 @@ class SubmitClaimAction
     public function __construct(
         private readonly EasyPostClient $ep,
         private readonly ClaimRepo $claims,
+        private readonly ClaimHelper $helper,
     ) {}
 
-    public function execute(User $user, Claim $claim): Claim
+    public function execute(User $user, int $id): array
     {
+        $claim = $this->claims->findInTeam((int) $user->current_team_id, $id);
+        abort_if(! $claim, 404);
+        Gate::authorize('view', $claim);
+
         if ($claim->state !== 'open') {
             throw new RuntimeException("Claim already in state '{$claim->state}'.");
         }
@@ -34,10 +40,12 @@ class SubmitClaimAction
             // keep local state — we can retry
         }
 
-        return $this->claims->transition(
+        $claim = $this->claims->transition(
             $claim,
             ['state' => 'submitted', 'ep_claim_id' => $epId],
             ['at' => now()->toIso8601String(), 'event' => 'submitted', 'by' => $user->id, 'ep_id' => $epId],
         );
+
+        return $this->helper->toIdentity($claim);
     }
 }

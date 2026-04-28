@@ -2,15 +2,19 @@
 
 namespace App\Actions\Clients;
 
+use App\Helpers\Clients\ClientHelper;
 use App\Models\Client;
 use App\Models\User;
 use App\Repositories\Client\ClientRepo;
 
 class CreateClientAction
 {
-    public function __construct(private readonly ClientRepo $clients) {}
+    public function __construct(
+        private readonly ClientRepo $clients,
+        private readonly ClientHelper $helper,
+    ) {}
 
-    public function execute(User $user, array $input): Client
+    public function execute(User $user, array $input): array
     {
         /** @var Client $client */
         $client = $this->clients->create(array_merge($input, [
@@ -18,6 +22,6 @@ class CreateClientAction
             'status' => $input['status'] ?? 'active',
         ]))['Model'];
 
-        return $client;
+        return $this->helper->toDetail($client);
     }
 }

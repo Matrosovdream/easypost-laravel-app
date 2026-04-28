@@ -2,7 +2,8 @@
 
 namespace App\Actions\Shipments;
 
-use App\Models\Approval;
+use App\Helpers\Shipments\ApprovalHelper;
+use App\Models\Shipment;
 use App\Models\User;
 use App\Repositories\Shipping\ApprovalRepo;
 use App\Repositories\Shipping\ShipmentEventRepo;
@@ -17,15 +18,21 @@ class ApproveShipmentAction
         private readonly ShipmentRepo $shipments,
         private readonly ShipmentEventRepo $events,
         private readonly ApprovalRepo $approvals,
+        private readonly ApprovalHelper $helper,
     ) {}
 
-    public function execute(User $approver, Approval $approval, bool $buyImmediately = true): array
+    public function execute(User $approver, int $approvalId, bool $buyImmediately = true): array
     {
+        abort_unless($approver->can('approve', Shipment::class), 403);
+
+        $approval = $this->approvals->findInTeam((int) $approver->current_team_id, $approvalId);
+        abort_if(! $approval, 404);
+
         if ($approval->status !== 'pending') {
             throw new RuntimeException("Approval already resolved as '{$approval->status}'.");
         }
 
-        return DB::transaction(function () use ($approver, $approval, $buyImmediately) {
+        $result = DB::transaction(function () use ($approver, $approval, $buyImmediately) {
             $approval = $this->approvals->markApproved($approval, $approver->id);
 
             $shipment = $this->shipments->findUnscoped($approval->shipment_id)
@@ -42,5 +49,7 @@ class ApproveShipmentAction
 
             return ['approval' => $approval, 'shipment' => $buy['shipment'] ?? $shipment->fresh(), 'buy' => $buy];
         });
+
+        return $this->helper->toApprovedResult($result);
     }
 }

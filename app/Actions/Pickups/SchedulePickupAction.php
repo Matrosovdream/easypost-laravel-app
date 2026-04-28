@@ -2,6 +2,7 @@
 
 namespace App\Actions\Pickups;
 
+use App\Helpers\Pickups\PickupHelper;
 use App\Models\Pickup;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
@@ -16,9 +17,10 @@ class SchedulePickupAction
         private readonly EasyPostClient $ep,
         private readonly PickupRepo $pickups,
         private readonly AddressRepo $addresses,
+        private readonly PickupHelper $helper,
     ) {}
 
-    public function execute(User $user, array $input): Pickup
+    public function execute(User $user, array $input): array
     {
         $teamId = (int) $user->current_team_id;
 
@@ -27,7 +29,7 @@ class SchedulePickupAction
             throw new RuntimeException('Address not found for this team.');
         }
 
-        return DB::transaction(function () use ($user, $teamId, $address, $input) {
+        $pickup = DB::transaction(function () use ($user, $teamId, $address, $input) {
             $payload = [
                 'address' => ['id' => $address->ep_address_id],
                 'min_datetime' => $input['min_datetime'],
@@ -46,7 +48,8 @@ class SchedulePickupAction
                 // keep local pickup in unknown state; user can retry buy
             }
 
-            return $this->pickups->create([
+            /** @var Pickup $pickup */
+            $pickup = $this->pickups->create([
                 'team_id' => $teamId,
                 'ep_pickup_id' => $epResp['id'] ?? null,
                 'reference' => $input['reference'] ?? null,
@@ -60,6 +63,10 @@ class SchedulePickupAction
                 'status' => $epResp ? 'unknown' : 'creating',
                 'created_by' => $user->id,
             ])['Model'];
+
+            return $pickup;
         });
+
+        return $this->helper->toScheduledPayload($pickup);
     }
 }

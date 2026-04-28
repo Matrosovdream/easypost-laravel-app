@@ -98,4 +98,23 @@ class AnalyticsOverviewHelper
             ->where('created_at', '>=', now()->startOfMonth())
             ->count();
     }
+
+    public function pendingApprovalsCount(int $teamId): int
+    {
+        return DB::table('approvals')
+            ->where('team_id', $teamId)
+            ->where('status', 'pending')
+            ->count();
+    }
+
+    public function trackerExceptionsCount(int $teamId): int
+    {
+        if (! DB::getSchemaBuilder()->hasTable('trackers')) {
+            return 0;
+        }
+        return DB::table('trackers')
+            ->where('team_id', $teamId)
+            ->whereIn('status', ['unknown', 'failure', 'return_to_sender'])
+            ->count();
+    }
 }

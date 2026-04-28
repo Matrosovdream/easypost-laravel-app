@@ -2,6 +2,7 @@
 
 namespace App\Actions\Trackers;
 
+use App\Helpers\Trackers\TrackerHelper;
 use App\Models\Tracker;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
@@ -15,9 +16,10 @@ class CreateStandaloneTrackerAction
         private readonly EasyPostClient $ep,
         private readonly TrackerRepo $trackers,
         private readonly TrackerEventRepo $events,
+        private readonly TrackerHelper $helper,
     ) {}
 
-    public function execute(User $user, string $trackingCode, string $carrier): Tracker
+    public function execute(User $user, string $trackingCode, string $carrier): array
     {
         $teamId = (int) $user->current_team_id;
 
@@ -28,7 +30,7 @@ class CreateStandaloneTrackerAction
             // degrade gracefully
         }
 
-        return DB::transaction(function () use ($teamId, $trackingCode, $carrier, $ep) {
+        $tracker = DB::transaction(function () use ($teamId, $trackingCode, $carrier, $ep) {
             /** @var Tracker $tracker */
             $tracker = $this->trackers->create([
                 'team_id' => $teamId,
@@ -54,5 +56,7 @@ class CreateStandaloneTrackerAction
 
             return $tracker->fresh(['events']);
         });
+
+        return $this->helper->toListItem($tracker);
     }
 }

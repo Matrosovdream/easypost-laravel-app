@@ -2,12 +2,14 @@
 
 namespace App\Actions\Batches;
 
+use App\Helpers\Batches\BatchHelper;
 use App\Models\Batch;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
 use App\Repositories\Operations\BatchRepo;
 use App\Repositories\Shipping\ShipmentRepo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class CreateBatchAction
 {
@@ -15,13 +17,16 @@ class CreateBatchAction
         private readonly EasyPostClient $ep,
         private readonly BatchRepo $batches,
         private readonly ShipmentRepo $shipments,
+        private readonly BatchHelper $helper,
     ) {}
 
-    public function execute(User $user, array $shipmentIds, ?string $reference = null): Batch
+    public function execute(User $user, array $shipmentIds, ?string $reference = null): array
     {
+        Gate::authorize('create', Batch::class);
+
         $teamId = (int) $user->current_team_id;
 
-        return DB::transaction(function () use ($user, $teamId, $shipmentIds, $reference) {
+        $batch = DB::transaction(function () use ($user, $teamId, $shipmentIds, $reference) {
             $shipments = $this->shipments->inTeam($teamId, ['id' => $shipmentIds]);
 
             $epIds = $shipments->pluck('ep_shipment_id')->filter()->values()->all();
@@ -59,5 +64,7 @@ class CreateBatchAction
 
             return $batch->fresh(['shipments']);
         });
+
+        return $this->helper->toIdentity($batch);
     }
 }

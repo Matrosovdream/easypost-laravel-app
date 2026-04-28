@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Auth;
  *
  * Returns a flat array suitable for UserResource, or null on failure.
  */
-final class PinLoginAction
+class PinLoginAction
 {
     public function __construct(
         private readonly UserRepo $users,

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Returns;
 
+use App\Helpers\Returns\ReturnHelper;
 use App\Models\ReturnRequest;
 use App\Models\User;
 use App\Repositories\Care\ReturnRequestRepo;
@@ -13,9 +14,10 @@ class CreateReturnRequestAction
     public function __construct(
         private readonly ReturnRequestRepo $returns,
         private readonly ShipmentRepo $shipments,
+        private readonly ReturnHelper $helper,
     ) {}
 
-    public function execute(User $user, array $input): ReturnRequest
+    public function execute(User $user, array $input): array
     {
         $teamId = (int) $user->current_team_id;
 
@@ -37,6 +39,6 @@ class CreateReturnRequestAction
             'created_by' => $user->id,
         ])['Model'];
 
-        return $return;
+        return $this->helper->toIdentity($return);
     }
 }

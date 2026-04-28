@@ -2,11 +2,13 @@
 
 namespace App\Actions\ScanForms;
 
+use App\Helpers\ScanForms\ScanFormHelper;
 use App\Models\ScanForm;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
 use App\Repositories\Operations\ScanFormRepo;
 use App\Repositories\Shipping\ShipmentRepo;
+use Illuminate\Support\Facades\Gate;
 use RuntimeException;
 
 class GenerateScanFormAction
@@ -15,14 +17,17 @@ class GenerateScanFormAction
         private readonly EasyPostClient $ep,
         private readonly ScanFormRepo $scanForms,
         private readonly ShipmentRepo $shipments,
+        private readonly ScanFormHelper $helper,
     ) {}
 
     /**
      * Validates that all shipments share the same carrier + from_address, then requests
      * a scan form from EasyPost and persists it.
      */
-    public function execute(User $user, array $shipmentIds): ScanForm
+    public function execute(User $user, array $shipmentIds): array
     {
+        Gate::authorize('create', ScanForm::class);
+
         $teamId = (int) $user->current_team_id;
 
         $shipments = $this->shipments->inTeam($teamId, ['id' => $shipmentIds])
@@ -60,6 +65,6 @@ class GenerateScanFormAction
             'created_by' => $user->id,
         ])['Model'];
 
-        return $scanForm;
+        return $this->helper->toCreatedPayload($scanForm);
     }
 }

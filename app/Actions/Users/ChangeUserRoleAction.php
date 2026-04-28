@@ -14,8 +14,18 @@ class ChangeUserRoleAction
         private readonly UserRepo $users,
     ) {}
 
-    public function execute(User $actor, User $target, string $newRoleSlug): void
+    public function execute(User $actor, int $targetId, string $newRoleSlug): array
     {
+        $rights = $actor->rights();
+        abort_unless(in_array('users.role.assign', $rights, true), 403);
+
+        if ($newRoleSlug === 'admin' && ! in_array('users.role.assign.admin', $rights, true)) {
+            abort(403, 'Only admins may promote to admin.');
+        }
+
+        $target = $this->users->getModel()->newQuery()->find($targetId);
+        abort_if(! $target, 404);
+
         $teamId = (int) $actor->current_team_id;
 
         $newRole = $this->roles->getBySlug($newRoleSlug);
@@ -34,5 +44,7 @@ class ChangeUserRoleAction
         }
 
         $this->users->replaceTeamRole($target->id, $teamId, (int) $newRole['id'], $actor->id);
+
+        return ['ok' => true];
     }
 }

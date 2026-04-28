@@ -9,7 +9,7 @@ class UpdateProfileAction
 {
     public function __construct(private readonly UserRepo $users) {}
 
-    public function execute(User $user, array $input): User
+    public function execute(User $user, array $input): array
     {
         $patch = array_filter([
             'name' => $input['name'] ?? null,
@@ -19,6 +19,7 @@ class UpdateProfileAction
         ], fn ($v) => $v !== null);
 
         $this->users->update($user->id, $patch);
-        return $user->fresh();
+
+        return ['ok' => true];
     }
 }

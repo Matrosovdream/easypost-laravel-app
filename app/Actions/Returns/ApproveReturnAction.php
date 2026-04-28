@@ -2,6 +2,7 @@
 
 namespace App\Actions\Returns;
 
+use App\Helpers\Returns\ReturnHelper;
 use App\Models\ReturnRequest;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
@@ -20,15 +21,20 @@ class ApproveReturnAction
         private readonly ShipmentRepo $shipments,
         private readonly ShipmentEventRepo $events,
         private readonly ParcelRepo $parcels,
+        private readonly ReturnHelper $helper,
     ) {}
 
-    public function execute(User $user, ReturnRequest $return): ReturnRequest
+    public function execute(User $user, int $id): array
     {
+        $return = $this->returns->findWithDetails($id);
+        abort_if(! $return, 404);
+        abort_unless($user->can('approve', ReturnRequest::class), 403);
+
         if ($return->status !== 'requested') {
             throw new RuntimeException("Return is already {$return->status}.");
         }
 
-        return DB::transaction(function () use ($user, $return) {
+        $return = DB::transaction(function () use ($user, $return) {
             $original = $return->originalShipment;
             if (! $original) {
                 throw new RuntimeException('Original shipment missing.');
@@ -79,5 +85,7 @@ class ApproveReturnAction
 
             return $this->returns->markApproved($return, $user->id, $returnShipment->id);
         });
+
+        return $this->helper->toApprovedResult($return);
     }
 }

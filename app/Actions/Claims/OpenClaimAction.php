@@ -2,6 +2,7 @@
 
 namespace App\Actions\Claims;
 
+use App\Helpers\Claims\ClaimHelper;
 use App\Models\Claim;
 use App\Models\User;
 use App\Repositories\Care\ClaimRepo;
@@ -13,9 +14,10 @@ class OpenClaimAction
     public function __construct(
         private readonly ClaimRepo $claims,
         private readonly ShipmentRepo $shipments,
+        private readonly ClaimHelper $helper,
     ) {}
 
-    public function execute(User $user, array $input): Claim
+    public function execute(User $user, array $input): array
     {
         $teamId = (int) $user->current_team_id;
 
@@ -46,6 +48,6 @@ class OpenClaimAction
             'assigned_to' => $input['assigned_to'] ?? null,
         ])['Model'];
 
-        return $claim;
+        return $this->helper->toIdentity($claim);
     }
 }

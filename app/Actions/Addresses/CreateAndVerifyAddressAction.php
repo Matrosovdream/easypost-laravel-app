@@ -2,6 +2,7 @@
 
 namespace App\Actions\Addresses;
 
+use App\Helpers\Addresses\AddressHelper;
 use App\Models\Address;
 use App\Models\User;
 use App\Mixins\Integrations\EasyPost\EasyPostClient;
@@ -12,9 +13,10 @@ class CreateAndVerifyAddressAction
     public function __construct(
         private readonly EasyPostClient $ep,
         private readonly AddressRepo $addresses,
+        private readonly AddressHelper $helper,
     ) {}
 
-    public function execute(User $user, array $input, bool $verify = true): Address
+    public function execute(User $user, array $input, bool $verify = true): array
     {
         $teamId = (int) $user->current_team_id;
 
@@ -27,7 +29,7 @@ class CreateAndVerifyAddressAction
             }
         }
 
-        return $this->addresses->createForTeam($teamId, [
+        $address = $this->addresses->createForTeam($teamId, [
             'client_id' => $input['client_id'] ?? null,
             'ep_address_id' => $ep['id'] ?? null,
             'name' => $ep['name'] ?? ($input['name'] ?? null),
@@ -45,6 +47,8 @@ class CreateAndVerifyAddressAction
             'verified_at' => ($ep['verifications']['delivery']['success'] ?? false) ? now() : null,
             'verification' => $ep['verifications'] ?? null,
         ]);
+
+        return $this->helper->toDetail($address);
     }
 
     private function toEp(array $i): array

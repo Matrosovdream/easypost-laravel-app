@@ -14,7 +14,7 @@ class ChangeOwnPinAction
         private readonly AuditLogRepo $auditLogs,
     ) {}
 
-    public function execute(User $user, string $oldPin, string $newPin): void
+    public function execute(User $user, string $oldPin, string $newPin): array
     {
         $pepper = config('app.pin_pepper');
         if (! is_string($pepper) || $pepper === '') {
@@ -45,5 +45,7 @@ class ChangeOwnPinAction
             'subject_id' => $user->id,
             'meta' => json_encode(['method' => 'self']),
         ]);
+
+        return ['ok' => true];
     }
 }
