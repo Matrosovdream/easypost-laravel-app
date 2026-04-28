@@ -55,7 +55,7 @@ class ApproveReturnAction
                     'from_address' => ['id' => $original->toAddress?->ep_address_id],
                     'to_address' => ['id' => $original->fromAddress?->ep_address_id],
                     'parcel' => ['id' => $parcel->ep_parcel_id],
-                ]);
+                ])->json();
                 $rates = $resp['rates'] ?? [];
                 $epId = $resp['id'] ?? null;
             } catch (\Throwable) {

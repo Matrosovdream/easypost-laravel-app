@@ -23,7 +23,7 @@ class CreateAndVerifyAddressAction
         $ep = null;
         if ($verify) {
             try {
-                $ep = $this->ep->createAndVerifyAddress($this->toEp($input));
+                $ep = $this->ep->createAndVerifyAddress($this->toEp($input))->json();
             } catch (\Throwable) {
                 // Fall through and create locally unverified
             }

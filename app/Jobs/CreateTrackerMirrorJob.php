@@ -33,7 +33,7 @@ class CreateTrackerMirrorJob implements ShouldQueue
         if (Tracker::where('tracking_code', $shipment->tracking_code)->exists()) return;
 
         try {
-            $resp = $ep->createTracker($shipment->tracking_code, $shipment->carrier);
+            $resp = $ep->createTracker($shipment->tracking_code, $shipment->carrier)->json();
         } catch (\Throwable) {
             return; // queue will retry
         }

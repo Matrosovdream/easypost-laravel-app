@@ -2,11 +2,12 @@
 
 namespace App\Jobs;
 
-use App\Models\Shipment;
+use App\Helpers\Notifications\TrackingNotificationHelper;
+use App\Repositories\Infra\NotificationEventRepo;
+use App\Repositories\Shipping\ShipmentRepo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable as QueueableTrait;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Emits a tracking status notification. Respects the recipient's
@@ -25,33 +26,22 @@ class SendTrackingNotificationJob implements ShouldQueue
 
     public function __construct(public int $shipmentId, public string $trackerStatus) {}
 
-    public function handle(): void
-    {
-        $shipment = Shipment::withoutGlobalScopes()->with('client')->find($this->shipmentId);
+    public function handle(
+        ShipmentRepo $shipments,
+        NotificationEventRepo $events,
+        TrackingNotificationHelper $helper,
+    ): void {
+        $shipment = $shipments->findUnscoped($this->shipmentId, ['client']);
         if (! $shipment) return;
 
-        $template = match ($this->trackerStatus) {
-            'delivered' => 'shipment.delivered',
-            'out_for_delivery' => 'shipment.out_for_delivery',
-            'failure', 'return_to_sender' => 'shipment.exception',
-            default => null,
-        };
+        $template = $helper->templateForStatus($this->trackerStatus);
         if (! $template) return;
 
-        $recipient = $shipment->client?->contact_email;
+        $recipient = $helper->recipientFor($shipment);
         if (! $recipient) return;
 
-        if (! DB::getSchemaBuilder()->hasTable('notification_events')) return;
+        if (! $events->tableExists()) return;
 
-        DB::table('notification_events')->insert([
-            'team_id' => $shipment->team_id,
-            'shipment_id' => $shipment->id,
-            'channel' => 'email',
-            'template' => $template,
-            'recipient' => $recipient,
-            'subject' => "Shipment update: {$this->trackerStatus}",
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $events->record($helper->buildEventRow($shipment, $template, $this->trackerStatus, $recipient));
     }
 }

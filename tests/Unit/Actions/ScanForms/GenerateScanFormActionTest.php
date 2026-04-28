@@ -55,7 +55,11 @@ it('persists scan form and returns shaped payload', function () {
     $a = new Shipment(['carrier' => 'USPS', 'from_address_id' => 1, 'tracking_code' => 'T1', 'ep_shipment_id' => 'shp_1']);
 
     $this->shipments->shouldReceive('inTeam')->andReturn(new Collection([$a]));
-    $this->ep->shouldReceive('createScanForm')->andReturn(['id' => 'sf_x', 'form_url' => 's3://f.pdf', 'status' => 'created']);
+    $this->ep->shouldReceive('createScanForm')->andReturn(
+        new \Illuminate\Http\Client\Response(
+            new \GuzzleHttp\Psr7\Response(200, [], json_encode(['id' => 'sf_x', 'form_url' => 's3://f.pdf', 'status' => 'created']))
+        )
+    );
 
     $form = new ScanForm(['carrier' => 'USPS', 'status' => 'created', 'form_pdf_s3_key' => 's3://f.pdf']);
     $form->id = 1;

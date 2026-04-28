@@ -108,7 +108,7 @@ class BuyShipmentAction
                     $shipment->ep_shipment_id,
                     (string) ($rate['id'] ?? ''),
                     $insuranceCents,
-                );
+                )->json();
             } catch (\Throwable $e) {
                 $errorMessage = $e->getMessage();
             }

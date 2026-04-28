@@ -25,7 +25,7 @@ class BuyBatchAction
 
         if ($batch->ep_batch_id) {
             try {
-                $resp = $this->ep->buyBatch($batch->ep_batch_id);
+                $resp = $this->ep->buyBatch($batch->ep_batch_id)->json();
                 $batch = $this->batches->updateState(
                     $batch,
                     $resp['state'] ?? 'purchasing',

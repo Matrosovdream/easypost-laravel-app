@@ -26,7 +26,7 @@ class VerifyExistingAddressAction
         }
 
         try {
-            $resp = $this->ep->verifyAddress($address->ep_address_id);
+            $resp = $this->ep->verifyAddress($address->ep_address_id)->json();
             $success = (bool) ($resp['verifications']['delivery']['success'] ?? false);
             $address = $this->addresses->markVerified($address, $success, $resp['verifications'] ?? null);
         } catch (\Throwable) {

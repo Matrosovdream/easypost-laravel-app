@@ -23,7 +23,7 @@ class GenerateBatchLabelsAction
 
         if ($batch->ep_batch_id) {
             try {
-                $resp = $this->ep->labelBatch($batch->ep_batch_id, $format);
+                $resp = $this->ep->labelBatch($batch->ep_batch_id, $format)->json();
                 $url = $resp['label_url']
                     ?? ($resp['batch']['label_url'] ?? null);
                 if ($url) {

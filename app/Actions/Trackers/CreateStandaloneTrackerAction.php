@@ -25,7 +25,7 @@ class CreateStandaloneTrackerAction
 
         $ep = null;
         try {
-            $ep = $this->ep->createTracker($trackingCode, $carrier);
+            $ep = $this->ep->createTracker($trackingCode, $carrier)->json();
         } catch (\Throwable) {
             // degrade gracefully
         }

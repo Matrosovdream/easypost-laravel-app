@@ -24,7 +24,7 @@ class BuyPickupAction
 
         if ($pickup->ep_pickup_id) {
             try {
-                $resp = $this->ep->buyPickup($pickup->ep_pickup_id, $carrier, $service);
+                $resp = $this->ep->buyPickup($pickup->ep_pickup_id, $carrier, $service)->json();
                 $pickup = $this->pickups->markScheduled($pickup, [
                     'carrier' => $carrier,
                     'service' => $service,

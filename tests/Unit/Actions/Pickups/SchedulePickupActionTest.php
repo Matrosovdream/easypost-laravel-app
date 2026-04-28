@@ -37,7 +37,11 @@ it('schedules pickup and returns shaped payload', function () {
     $pickup->id = 5;
 
     DB::shouldReceive('transaction')->andReturnUsing(fn ($cb) => $cb());
-    $this->ep->shouldReceive('createPickup')->andReturn(['id' => 'pick_x', 'pickup_rates' => [['rate' => '5.00']]]);
+    $this->ep->shouldReceive('createPickup')->andReturn(
+        new \Illuminate\Http\Client\Response(
+            new \GuzzleHttp\Psr7\Response(200, [], json_encode(['id' => 'pick_x', 'pickup_rates' => [['rate' => '5.00']]]))
+        )
+    );
     $this->pickups->shouldReceive('create')->andReturn(['Model' => $pickup]);
 
     $user = new User();

@@ -48,7 +48,7 @@ class GenerateScanFormAction
 
         $epResp = null;
         try {
-            $epResp = $this->ep->createScanForm($shipments->pluck('ep_shipment_id')->values()->all());
+            $epResp = $this->ep->createScanForm($shipments->pluck('ep_shipment_id')->values()->all())->json();
         } catch (\Throwable) {
             // leave status 'creating'
         }

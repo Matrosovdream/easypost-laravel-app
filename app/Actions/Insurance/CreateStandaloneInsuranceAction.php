@@ -39,7 +39,7 @@ class CreateStandaloneInsuranceAction
                 'carrier' => $input['carrier'],
                 'amount' => number_format($amountCents / 100, 2, '.', ''),
                 'reference' => $input['reference'] ?? null,
-            ]);
+            ])->json();
         } catch (\Throwable $e) {
             $messages['error'] = $e->getMessage();
         }

@@ -42,7 +42,7 @@ class SchedulePickupAction
             $epResp = null;
             try {
                 if ($address->ep_address_id) {
-                    $epResp = $this->ep->createPickup(array_filter($payload, fn ($v) => $v !== null));
+                    $epResp = $this->ep->createPickup(array_filter($payload, fn ($v) => $v !== null))->json();
                 }
             } catch (\Throwable) {
                 // keep local pickup in unknown state; user can retry buy

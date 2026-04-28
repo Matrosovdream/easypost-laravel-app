@@ -50,7 +50,7 @@ class CreateShipmentAction
                     to: $this->toEp($toAddress),
                     parcel: $this->parcelEp($parcel),
                     options: $input['options'] ?? [],
-                );
+                )->json();
                 $rates = $epResponse['rates'] ?? [];
                 $epShipmentId = $epResponse['id'] ?? null;
             } catch (Throwable) {

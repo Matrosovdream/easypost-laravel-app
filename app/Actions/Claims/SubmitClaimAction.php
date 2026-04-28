@@ -34,7 +34,7 @@ class SubmitClaimAction
                 'type' => $claim->type,
                 'amount' => number_format($claim->amount_cents / 100, 2, '.', ''),
                 'description' => $claim->description,
-            ]);
+            ])->json();
             $epId = $resp['id'] ?? null;
         } catch (\Throwable) {
             // keep local state — we can retry

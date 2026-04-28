@@ -34,7 +34,7 @@ class CreateBatchAction
             $epBatch = null;
             try {
                 if (! empty($epIds)) {
-                    $epBatch = $this->ep->createBatch($epIds);
+                    $epBatch = $this->ep->createBatch($epIds)->json();
                 }
             } catch (\Throwable) {
                 // EP unavailable; batch stays in 'creating' and we can retry later
