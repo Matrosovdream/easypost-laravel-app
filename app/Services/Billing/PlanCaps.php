@@ -2,7 +2,7 @@
 
 namespace App\Services\Billing;
 
-use Illuminate\Support\Facades\DB;
+use App\Helpers\Analytics\AnalyticsOverviewHelper;
 
 class PlanCaps
 {
@@ -21,11 +21,9 @@ class PlanCaps
 
     public function usageForTeamThisMonth(int $teamId): int
     {
-        return (int) DB::table('shipments')
-            ->where('team_id', $teamId)
-            ->whereIn('status', ['purchased', 'packed', 'delivered', 'in_transit', 'out_for_delivery'])
-            ->where('created_at', '>=', now()->startOfMonth())
-            ->count();
+        return AnalyticsOverviewHelper::monthlyUsageCount($teamId, [
+            'purchased', 'packed', 'delivered', 'in_transit', 'out_for_delivery',
+        ]);
     }
 
     public function remaining(int $teamId, string $plan): ?int

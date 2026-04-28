@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Navigation;
 
+use App\Helpers\Analytics\AnalyticsOverviewHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -45,11 +46,7 @@ class CountsController extends Controller
         }
 
         if (in_array('labels.print', $rights, true)) {
-            $counts['printReady'] = DB::table('shipments')
-                ->where('team_id', $teamId)
-                ->where('status', 'purchased')
-                ->whereNull('packed_at')
-                ->count();
+            $counts['printReady'] = AnalyticsOverviewHelper::printReadyCount($teamId);
         }
 
         return response()->json($counts);
