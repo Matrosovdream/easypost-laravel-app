@@ -7,10 +7,14 @@ use App\Models\User;
 
 class ListAnalyticsCarriersAction
 {
+    public function __construct(
+        private readonly AnalyticsOverviewHelper $helper,
+    ) {}
+
     public function execute(User $user): array
     {
         return [
-            'carriers' => AnalyticsOverviewHelper::carrierPerformance((int) $user->current_team_id),
+            'carriers' => $this->helper->carrierPerformance((int) $user->current_team_id),
         ];
     }
 }

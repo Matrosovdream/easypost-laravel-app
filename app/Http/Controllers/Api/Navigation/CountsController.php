@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class CountsController extends Controller
 {
+    public function __construct(
+        private readonly AnalyticsOverviewHelper $analytics,
+    ) {}
+
     public function __invoke(Request $request): JsonResponse
     {
         /** @var User $user */
@@ -46,7 +50,7 @@ class CountsController extends Controller
         }
 
         if (in_array('labels.print', $rights, true)) {
-            $counts['printReady'] = AnalyticsOverviewHelper::printReadyCount($teamId);
+            $counts['printReady'] = $this->analytics->printReadyCount($teamId);
         }
 
         return response()->json($counts);

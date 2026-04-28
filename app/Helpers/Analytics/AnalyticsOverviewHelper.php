@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\DB;
 
 class AnalyticsOverviewHelper
 {
-    private static function baseQuery(int $teamId): Builder
+    private function baseQuery(int $teamId): Builder
     {
         return DB::table('shipments')->where('team_id', $teamId);
     }
 
-    public static function byStatus(int $teamId): Collection
+    public function byStatus(int $teamId): Collection
     {
-        return self::baseQuery($teamId)
+        return $this->baseQuery($teamId)
             ->selectRaw('status, count(*) as cnt, coalesce(sum(cost_cents), 0) as cost')
             ->groupBy('status')
             ->get()
@@ -23,9 +23,9 @@ class AnalyticsOverviewHelper
             ->values();
     }
 
-    public static function byCarrier(int $teamId): Collection
+    public function byCarrier(int $teamId): Collection
     {
-        return self::baseQuery($teamId)
+        return $this->baseQuery($teamId)
             ->whereNotNull('carrier')
             ->selectRaw('carrier, count(*) as cnt, coalesce(sum(cost_cents), 0) as cost')
             ->groupBy('carrier')
@@ -35,9 +35,9 @@ class AnalyticsOverviewHelper
             ->values();
     }
 
-    public static function daily(int $teamId, int $days = 30): Collection
+    public function daily(int $teamId, int $days = 30): Collection
     {
-        return self::baseQuery($teamId)
+        return $this->baseQuery($teamId)
             ->where('created_at', '>=', now()->subDays($days))
             ->selectRaw("to_char(created_at, 'YYYY-MM-DD') as d, count(*) as cnt, coalesce(sum(cost_cents), 0) as cost")
             ->groupByRaw("to_char(created_at, 'YYYY-MM-DD')")
@@ -50,7 +50,7 @@ class AnalyticsOverviewHelper
     /**
      * Derive totals from a byStatus collection — avoids two extra full-table scans.
      */
-    public static function totalsFromByStatus(Collection $byStatus): array
+    public function totalsFromByStatus(Collection $byStatus): array
     {
         return [
             'total_shipments' => (int) $byStatus->sum('count'),
@@ -58,9 +58,9 @@ class AnalyticsOverviewHelper
         ];
     }
 
-    public static function carrierPerformance(int $teamId): Collection
+    public function carrierPerformance(int $teamId): Collection
     {
-        return self::baseQuery($teamId)
+        return $this->baseQuery($teamId)
             ->whereNotNull('carrier')
             ->selectRaw('carrier,
                 count(*) as total,
@@ -83,17 +83,17 @@ class AnalyticsOverviewHelper
             ->values();
     }
 
-    public static function printReadyCount(int $teamId): int
+    public function printReadyCount(int $teamId): int
     {
-        return self::baseQuery($teamId)
+        return $this->baseQuery($teamId)
             ->where('status', 'purchased')
             ->whereNull('packed_at')
             ->count();
     }
 
-    public static function monthlyUsageCount(int $teamId, array $statuses): int
+    public function monthlyUsageCount(int $teamId, array $statuses): int
     {
-        return (int) self::baseQuery($teamId)
+        return (int) $this->baseQuery($teamId)
             ->whereIn('status', $statuses)
             ->where('created_at', '>=', now()->startOfMonth())
             ->count();

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Auth;
 
+use App\Helpers\Auth\AuthHelper;
 use App\Repositories\Infra\AuditLogRepo;
 use App\Repositories\User\UserRepo;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ final class PinLoginAction
     public function __construct(
         private readonly UserRepo $users,
         private readonly AuditLogRepo $auditLogs,
+        private readonly AuthHelper $authHelper,
     ) {}
 
     public function execute(string $pin, Request $request): ?array
@@ -54,16 +56,9 @@ final class PinLoginAction
 
         $this->users->touchLastLoginNow($user->id);
 
-        $this->auditLogs->record([
-            'team_id' => $user->current_team_id,
-            'user_id' => $user->id,
-            'action' => 'auth.pin_login',
-            'subject_type' => \App\Models\User::class,
-            'subject_id' => $user->id,
-            'meta' => json_encode(['method' => 'pin']),
-            'ip' => $request->ip(),
-            'user_agent' => substr((string) $request->userAgent(), 0, 255),
-        ]);
+        $this->auditLogs->record(
+            $this->authHelper->buildAuditPayload($user, 'auth.pin_login', $request, ['method' => 'pin'])
+        );
 
         return $mapped;
     }

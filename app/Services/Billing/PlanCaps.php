@@ -14,6 +14,10 @@ class PlanCaps
         'enterprise' => null, // unlimited
     ];
 
+    public function __construct(
+        private readonly AnalyticsOverviewHelper $analytics,
+    ) {}
+
     public function capForPlan(string $plan): ?int
     {
         return self::CAPS[$plan] ?? self::CAPS['starter'];
@@ -21,7 +25,7 @@ class PlanCaps
 
     public function usageForTeamThisMonth(int $teamId): int
     {
-        return AnalyticsOverviewHelper::monthlyUsageCount($teamId, [
+        return $this->analytics->monthlyUsageCount($teamId, [
             'purchased', 'packed', 'delivered', 'in_transit', 'out_for_delivery',
         ]);
     }
