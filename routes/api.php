@@ -28,6 +28,8 @@ use App\Http\Controllers\Api\Ops\PrintQueueController;
 use App\Http\Controllers\Api\Clients\ClientsController;
 use App\Http\Controllers\Api\Settings\TeamController;
 use App\Http\Controllers\Api\Settings\UsersController as SettingsUsersController;
+use App\Http\Controllers\Api\Settings\ManagersController as SettingsManagersController;
+use App\Http\Controllers\Api\Settings\PeopleController as SettingsPeopleController;
 use App\Http\Controllers\Api\Settings\AuditLogController;
 use App\Http\Controllers\Api\Profile\ProfileController;
 use App\Http\Controllers\Api\Billing\CheckoutController as BillingCheckoutController;
@@ -164,6 +166,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users/{id}/disable', [SettingsUsersController::class, 'disable'])->whereNumber('id')->name('users.disable');
         Route::post('users/{id}/enable',  [SettingsUsersController::class, 'enable'])->whereNumber('id')->name('users.enable');
         Route::post('users/{id}/pin',     [SettingsUsersController::class, 'regeneratePin'])->whereNumber('id')->name('users.pin');
+        Route::get('managers',        [SettingsManagersController::class, 'index'])->name('managers.index');
+        Route::get('people/{role}',   [SettingsPeopleController::class, 'index'])->where('role', '[a-z_]+')->name('people.index');
         Route::get('audit-log',       AuditLogController::class)->name('audit-log');
     });
 

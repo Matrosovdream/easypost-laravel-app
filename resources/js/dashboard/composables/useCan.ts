@@ -5,6 +5,7 @@ export function useCan() {
     return {
         can: (right: string): boolean => auth.can(right),
         canAny: (rights: string[]): boolean => auth.canAny(rights),
+        hasAnyRole: (slugs: string[]): boolean => auth.hasAnyRole(slugs),
         primaryRole: (): string => auth.primaryRole,
     };
 }

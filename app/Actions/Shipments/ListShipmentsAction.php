@@ -16,7 +16,7 @@ class ListShipmentsAction
     {
         $page = $this->shipments->paginateScoped(
             filter: ['status' => $status, 'carrier' => $carrier, 'q' => $q],
-            with: ['toAddress', 'assignee', 'requester'],
+            with: ['toAddress', 'assignee', 'requester', 'client'],
             perPage: $perPage,
         );
 

@@ -26,6 +26,45 @@ export type TeamUser = {
     membership_status: string | null;
 };
 
+export type ManagerRow = {
+    id: number;
+    name: string;
+    email: string;
+    is_active: boolean;
+    membership_status: string | null;
+    last_login_at: string | null;
+    joined_at: string | null;
+    created_at: string | null;
+    shipments_assigned: number;
+    shipments_approved: number;
+    shipments_approved_30d: number;
+    approvals_pending: number;
+};
+
+export type PersonRow = {
+    id: number;
+    name: string;
+    email: string;
+    is_active: boolean;
+    membership_status: string | null;
+    last_login_at: string | null;
+    joined_at: string | null;
+    created_at: string | null;
+    [statKey: string]: number | string | boolean | null;
+};
+
+export type PeopleColumn = {
+    key: string;
+    label: string;
+    severity_when_gt0?: 'warn' | 'danger' | 'info';
+};
+
+export type PeopleResponse = {
+    role: string;
+    columns: PeopleColumn[];
+    data: PersonRow[];
+};
+
 export type AuditEntry = {
     id: number;
     action: string;
@@ -48,6 +87,14 @@ export const settingsApi = {
     },
     async users(): Promise<{ data: TeamUser[] }> {
         const { data } = await client.get('/settings/users');
+        return data;
+    },
+    async managers(): Promise<{ data: ManagerRow[] }> {
+        const { data } = await client.get('/settings/managers');
+        return data;
+    },
+    async peopleByRole(role: string): Promise<PeopleResponse> {
+        const { data } = await client.get(`/settings/people/${role}`);
         return data;
     },
     async inviteUser(input: {

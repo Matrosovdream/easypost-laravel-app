@@ -149,6 +149,61 @@ class UserRepo extends AbstractRepo
         $this->model->newQuery()->where('id', $userId)->update(['last_login_at' => now()]);
     }
 
+    public function listUsersByRoleWithStats(int $teamId, string $roleSlug): \Illuminate\Support\Collection
+    {
+        $thirty = now()->subDays(30);
+
+        $base = \Illuminate\Support\Facades\DB::table('users')
+            ->join('team_user', 'team_user.user_id', '=', 'users.id')
+            ->join('role_user', function ($j) use ($teamId) {
+                $j->on('role_user.user_id', '=', 'users.id')->where('role_user.team_id', $teamId);
+            })
+            ->join('roles', 'roles.id', '=', 'role_user.role_id')
+            ->where('team_user.team_id', $teamId)
+            ->where('roles.slug', $roleSlug)
+            ->whereNull('users.deleted_at')
+            ->select(
+                'users.id', 'users.name', 'users.email', 'users.is_active',
+                'users.last_login_at', 'users.created_at',
+                'team_user.joined_at', 'team_user.status as membership_status',
+                'team_user.client_id',
+            );
+
+        switch ($roleSlug) {
+            case 'manager':
+                $base
+                    ->selectRaw('(select count(*) from shipments where shipments.team_id = ? and shipments.assigned_to = users.id and shipments.deleted_at is null) as shipments_assigned', [$teamId])
+                    ->selectRaw('(select count(*) from shipments where shipments.team_id = ? and shipments.approved_by = users.id and shipments.deleted_at is null and shipments.approved_at >= ?) as shipments_approved_30d', [$teamId, $thirty])
+                    ->selectRaw('(select count(*) from shipments where shipments.team_id = ? and shipments.approved_by = users.id and shipments.deleted_at is null) as shipments_approved_total', [$teamId])
+                    ->selectRaw("(select count(*) from approvals where approvals.team_id = ? and approvals.approver_id = users.id and approvals.status = 'pending') as approvals_pending", [$teamId]);
+                break;
+            case 'shipper':
+                $base
+                    ->selectRaw('(select count(*) from shipments where shipments.team_id = ? and shipments.assigned_to = users.id and shipments.packed_at is null and shipments.deleted_at is null) as shipments_assigned_open', [$teamId])
+                    ->selectRaw('(select count(*) from shipments where shipments.team_id = ? and shipments.assigned_to = users.id and shipments.packed_at >= ? and shipments.deleted_at is null) as shipments_packed_30d', [$teamId, $thirty]);
+                break;
+            case 'cs_agent':
+                $base
+                    ->selectRaw('(select count(*) from returns where returns.team_id = ? and returns.approved_by = users.id and returns.approved_at >= ? and returns.deleted_at is null) as returns_handled_30d', [$teamId, $thirty])
+                    ->selectRaw('(select count(*) from claims where claims.team_id = ? and claims.assigned_to = users.id and claims.deleted_at is null) as claims_assigned', [$teamId])
+                    ->selectRaw("(select count(*) from claims where claims.team_id = ? and claims.assigned_to = users.id and claims.state = 'open' and claims.deleted_at is null) as claims_open", [$teamId]);
+                break;
+            case 'client':
+                $base
+                    ->selectRaw('(select count(*) from shipments where shipments.team_id = ? and shipments.client_id = team_user.client_id and shipments.created_at >= ? and shipments.deleted_at is null) as shipments_30d', [$teamId, $thirty])
+                    ->selectRaw("(select count(*) from returns where returns.team_id = ? and returns.client_id = team_user.client_id and returns.status not in ('refunded','closed') and returns.deleted_at is null) as returns_open", [$teamId]);
+                break;
+            // viewer: no extra stats
+        }
+
+        return $base->orderBy('users.name')->get();
+    }
+
+    public function listManagersWithStats(int $teamId): \Illuminate\Support\Collection
+    {
+        return $this->listUsersByRoleWithStats($teamId, 'manager');
+    }
+
     public function listTeamMembers(int $teamId): \Illuminate\Support\Collection
     {
         return \Illuminate\Support\Facades\DB::table('users')

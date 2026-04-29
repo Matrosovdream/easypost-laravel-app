@@ -58,6 +58,8 @@ export const useAuthStore = defineStore('auth', {
         can: (s) => (right: string): boolean => s.user?.permissions.includes(right) ?? false,
         canAny: (s) => (rights: string[]): boolean =>
             rights.some((r) => s.user?.permissions.includes(r)),
+        hasAnyRole: (s) => (slugs: string[]): boolean =>
+            (s.user?.roles ?? []).some((r) => slugs.includes(r.slug)),
     },
     actions: {
         setUser(user: CurrentUser | null) {

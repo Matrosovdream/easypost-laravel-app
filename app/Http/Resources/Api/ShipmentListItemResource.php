@@ -26,6 +26,10 @@ class ShipmentListItemResource extends JsonResource
             'cost_cents' => $m?->cost_cents,
             'reference' => $m?->reference,
             'client_id' => $m?->client_id,
+            'client' => $m?->relationLoaded('client') && $m->client ? [
+                'id' => $m->client->id,
+                'company_name' => $m->client->company_name,
+            ] : null,
             'assigned_to' => $m?->assigned_to,
             'requested_by' => $m?->requested_by,
             'to_address' => $m?->relationLoaded('toAddress') && $m->toAddress ? [
