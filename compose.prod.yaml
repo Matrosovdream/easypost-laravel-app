@@ -149,7 +149,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
 
 networks:
   easypost-management-app-production:
