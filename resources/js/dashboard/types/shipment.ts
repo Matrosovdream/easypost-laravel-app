@@ -19,6 +19,7 @@ export type ShipmentListItem = {
     cost_cents: number | null;
     reference: string | null;
     client_id: number | null;
+    client: { id: number; company_name: string } | null;
     assigned_to: number | null;
     requested_by: number | null;
     to_address: {
