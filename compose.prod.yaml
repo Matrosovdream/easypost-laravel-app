@@ -9,11 +9,16 @@ services:
       - easypost-management-app-public-assets:/var/www/public/build:ro
     networks:
       - easypost-management-app-production
-    ports:
-      - "${NGINX_PORT:-8080}:80"
+      - traefik-network
     depends_on:
       php-fpm:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shipdesk.rule=Host(`shipdesk.devflip.io`)"
+      - "traefik.http.routers.shipdesk.entrypoints=websecure"
+      - "traefik.http.routers.shipdesk.tls.certresolver=letsencrypt"
+      - "traefik.http.services.shipdesk.loadbalancer.server.port=80"
 
   php-fpm:
     build:
@@ -76,8 +81,6 @@ services:
       - .env
     networks:
       - easypost-management-app-production
-    ports:
-      - "${REVERB_PORT:-9090}:8080"
     depends_on:
       redis:
         condition: service_healthy
@@ -123,8 +126,6 @@ services:
     image: postgres:16
     restart: unless-stopped
     user: postgres
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
     environment:
       - POSTGRES_DB=${DB_DATABASE:-easypost}
       - POSTGRES_USER=${DB_USERNAME:-easypost}
@@ -148,10 +149,13 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
 
 networks:
   easypost-management-app-production:
+    driver: bridge
+  traefik-network:
+    external: true
 
 volumes:
   postgres-data-production:
