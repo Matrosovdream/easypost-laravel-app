@@ -13,11 +13,6 @@ class UsersSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->environment('production')) {
-            $this->command?->warn('UsersSeeder: skipped in production.');
-            return;
-        }
-
         $pepper = config('app.pin_pepper');
         if (! $pepper) {
             throw new \RuntimeException('PIN_PEPPER is not set — cannot seed users without a pepper.');
