@@ -10,8 +10,11 @@ import StatusPill from '@dashboard/components/shipments/StatusPill.vue';
 import { shipmentsApi } from '@dashboard/api/shipments';
 import type { ShipmentListItem } from '@dashboard/types/shipment';
 import { useRouter } from 'vue-router';
+import { useCan } from '@dashboard/composables/useCan';
 
 const router = useRouter();
+const { hasAnyRole } = useCan();
+const isAdmin = hasAnyRole(['admin']);
 const rows = ref<ShipmentListItem[]>([]);
 const total = ref(0);
 const page = ref(1);
@@ -93,6 +96,12 @@ onMounted(() => load());
                 data-key="id"
             >
                 <Column field="id" header="#" style="width: 5rem" />
+                <Column v-if="isAdmin" header="Tenant" style="width: 12rem">
+                    <template #body="s">
+                        <span v-if="s.data.client">{{ s.data.client.company_name }}</span>
+                        <span v-else class="text-surface-400">—</span>
+                    </template>
+                </Column>
                 <Column field="status" header="Status">
                     <template #body="s">
                         <StatusPill :status="s.data.status" />
