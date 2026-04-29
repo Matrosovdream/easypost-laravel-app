@@ -1,0 +1,47 @@
+[
+  {
+    "id": "prcl_dummy_001",
+    "object": "Parcel",
+    "predefined_package": "Parcel",
+    "length": 10.0,
+    "width": 8.0,
+    "height": 4.0,
+    "weight": 16.0
+  },
+  {
+    "id": "prcl_dummy_002",
+    "object": "Parcel",
+    "predefined_package": "Parcel",
+    "length": 12.0,
+    "width": 9.0,
+    "height": 5.0,
+    "weight": 24.0
+  },
+  {
+    "id": "prcl_dummy_003",
+    "object": "Parcel",
+    "predefined_package": "FlatRateBox",
+    "length": 11.0,
+    "width": 8.5,
+    "height": 5.5,
+    "weight": 32.0
+  },
+  {
+    "id": "prcl_dummy_004",
+    "object": "Parcel",
+    "predefined_package": "Parcel",
+    "length": 8.0,
+    "width": 6.0,
+    "height": 3.0,
+    "weight": 12.0
+  },
+  {
+    "id": "prcl_dummy_005",
+    "object": "Parcel",
+    "predefined_package": "Parcel",
+    "length": 14.0,
+    "width": 10.0,
+    "height": 6.0,
+    "weight": 48.0
+  }
+]

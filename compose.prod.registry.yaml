@@ -1,0 +1,146 @@
+services:
+  web:
+    image: ${REGISTRY:-ghcr.io/yourorg}/easypost-management-app-nginx:${APP_VERSION:-latest}
+    restart: unless-stopped
+    volumes:
+      - easypost-management-app-storage-production:/var/www/storage:ro
+      - easypost-management-app-public-assets:/var/www/public/build:ro
+    networks:
+      - easypost-management-app-production
+    ports:
+      - "${NGINX_PORT:-8080}:80"
+    depends_on:
+      php-fpm:
+        condition: service_healthy
+
+  php-fpm:
+    image: ${REGISTRY:-ghcr.io/yourorg}/easypost-management-app-php:${APP_VERSION:-latest}
+    restart: unless-stopped
+    volumes:
+      - easypost-management-app-public-assets:/var/www/public/build
+      - easypost-management-app-storage-production:/var/www/storage
+    env_file:
+      - .env
+    networks:
+      - easypost-management-app-production
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  horizon:
+    image: ${REGISTRY:-ghcr.io/yourorg}/easypost-management-app-php:${APP_VERSION:-latest}
+    restart: unless-stopped
+    volumes:
+      - easypost-management-app-storage-production:/var/www/storage
+    env_file:
+      - .env
+    networks:
+      - easypost-management-app-production
+    depends_on:
+      php-fpm:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    entrypoint: []
+    command: ["php", "artisan", "horizon"]
+    stop_signal: SIGTERM
+    stop_grace_period: 60s
+    healthcheck:
+      test: ["CMD-SHELL", "php artisan horizon:status | grep -q running || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  reverb:
+    image: ${REGISTRY:-ghcr.io/yourorg}/easypost-management-app-php:${APP_VERSION:-latest}
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - easypost-management-app-production
+    ports:
+      - "${REVERB_PORT:-9090}:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    entrypoint: []
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+
+  scheduler:
+    image: ${REGISTRY:-ghcr.io/yourorg}/easypost-management-app-php:${APP_VERSION:-latest}
+    restart: unless-stopped
+    volumes:
+      - easypost-management-app-storage-production:/var/www/storage
+    env_file:
+      - .env
+    networks:
+      - easypost-management-app-production
+    depends_on:
+      php-fpm:
+        condition: service_healthy
+    entrypoint: []
+    command: ["php", "artisan", "schedule:work"]
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    user: postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=${DB_DATABASE:-easypost}
+      - POSTGRES_USER=${DB_USERNAME:-easypost}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
+    volumes:
+      - postgres-data-production:/var/lib/postgresql/data
+    networks:
+      - easypost-management-app-production
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - easypost-management-app-production
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    restart: unless-stopped
+    environment:
+      - MEILI_MASTER_KEY=${MEILISEARCH_KEY}
+      - MEILI_ENV=production
+      - MEILI_NO_ANALYTICS=true
+    volumes:
+      - meilisearch-data-production:/meili_data
+    networks:
+      - easypost-management-app-production
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--spider", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  easypost-management-app-production:
+
+volumes:
+  postgres-data-production:
+  easypost-management-app-storage-production:
+  easypost-management-app-public-assets:
+  meilisearch-data-production:

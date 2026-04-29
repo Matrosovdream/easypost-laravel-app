@@ -1,0 +1,39 @@
+[
+  {
+    "id": "batch_dummy_001",
+    "object": "Batch",
+    "reference": "DUMMY-BATCH-001",
+    "state": "purchased",
+    "num_shipments": 2,
+    "shipments": [
+      { "id": "shp_dummy_001", "batch_status": "postage_purchased", "batch_message": null },
+      { "id": "shp_dummy_002", "batch_status": "postage_purchased", "batch_message": null }
+    ],
+    "status": {
+      "created": 0,
+      "queued_for_purchase": 0,
+      "creation_failed": 0,
+      "postage_purchased": 2,
+      "postage_purchase_failed": 0
+    },
+    "label_url": "https://easypost-files.s3.amazonaws.com/files/batch/dummy_001/batch.pdf"
+  },
+  {
+    "id": "batch_dummy_002",
+    "object": "Batch",
+    "reference": "DUMMY-BATCH-002",
+    "state": "creating",
+    "num_shipments": 1,
+    "shipments": [
+      { "id": "shp_dummy_003", "batch_status": "created", "batch_message": null }
+    ],
+    "status": {
+      "created": 1,
+      "queued_for_purchase": 0,
+      "creation_failed": 0,
+      "postage_purchased": 0,
+      "postage_purchase_failed": 0
+    },
+    "label_url": null
+  }
+]
